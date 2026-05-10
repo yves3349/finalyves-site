@@ -1,0 +1,24 @@
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+
+  try {
+    const response = await fetch('https://www.tikwm.com/api/user/info?unique_id=finalyves', {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      }
+    });
+
+    const data = await response.json();
+
+    if (data.code === 0 && data.data) {
+      return res.status(200).json({
+        followers: data.data.follower_count,
+        likes: data.data.total_favorited,
+      });
+    }
+
+    return res.status(500).json({ error: 'Failed to fetch stats' });
+  } catch (e) {
+    return res.status(500).json({ error: e.message });
+  }
+}
